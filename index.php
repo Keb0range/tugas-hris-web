@@ -1,18 +1,18 @@
 <?php
 session_start();
-// Memeriksa session login
+
 if (!isset($_SESSION['status']) || $_SESSION['status'] != "sudah_login") {
     header("location:login.php");
     exit();
 }
 
-// Menghubungkan ke database
 include 'koneksi.php';
 
 $id_user = $_SESSION['id_user'];
 $nama_lengkap = $_SESSION['nama_lengkap'];
 $role = $_SESSION['role'];
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -20,26 +20,37 @@ $role = $_SESSION['role'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard - HRIS Payroll</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     
     <nav class="navbar navbar-expand-lg navbar-dark px-4" style="background-color: #0b1320;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">HRIS Payroll</a>
+           <a class="navbar-brand" href="index.php">
+                <?php echo ($role == 'admin') ? 'HRIS Payroll - Admin Panel' : 'HRIS Payroll'; ?>
+            </a>
+            <ul class="navbar-nav me-auto ms-3">
+                <?php if ($role == 'admin') { ?>
+                    <li class="nav-item">
+                        <a class="nav-link text-white bg-white bg-opacity-10 rounded px-3 me-2" href="data_karyawan.php">Data Karyawan</a>
+                    </li>
+                <?php } ?>
+                <li class="nav-item">
+                    <a class="nav-link text-white bg-white bg-opacity-10 rounded px-3 me-2" href="ganti_password.php">Ganti Password</a>
+                </li>
+            </ul>
+            
             <div class="d-flex align-items-center text-white">
-                <span class="me-3">Halo, <strong><?php echo $nama_lengkap; ?></strong> (Role: <span class="badge bg-primary"><?php echo ucfirst($role); ?></span>)</span>
                 <a href="logout.php" class="btn btn-danger btn-sm">Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-4 mb-5">
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2>Dashboard Utama</h2>
+                        <h2 class="fw-normal">Halo, <strong><?php echo $nama_lengkap; ?></strong></h2>
                         <p class="text-muted">Selamat datang di sistem pengelolaan penggajian karyawan.</p>
                     </div>
                 </div>
@@ -55,7 +66,7 @@ $role = $_SESSION['role'];
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered table-striped align-middle">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -69,7 +80,7 @@ $role = $_SESSION['role'];
                             <tbody>
                                 <?php
                                 // Menggunakan Query JOIN untuk menggabungkan tabel penggajian dan users
-                                $query = mysqli_query($koneksi, "SELECT penggajian.*, users.nama_lengkap FROM penggajian JOIN users ON penggajian.id_user = users.id_user");
+                                $query = mysqli_query($koneksi, "SELECT penggajian.*, users.nama_lengkap FROM penggajian JOIN users ON penggajian.id_user = users.id_user ORDER BY penggajian.id_penggajian DESC");
                                 $no = 1;
                                 if (mysqli_num_rows($query) > 0) {
                                     while ($data = mysqli_fetch_assoc($query)) {
@@ -81,11 +92,7 @@ $role = $_SESSION['role'];
                                     <td>Rp <?php echo number_format($data['potongan'], 0, ',', '.'); ?></td>
                                     <td>Rp <?php echo number_format($data['total_gaji'], 0, ',', '.'); ?></td>
                                     <td>
-                                        <?php if (!empty($data['bukti_transfer'])) { ?>
-                                            <a href="uploads/<?php echo $data['bukti_transfer']; ?>" target="_blank" class="btn btn-sm btn-info text-white">Lihat Bukti</a>
-                                        <?php } else { ?>
-                                            <span class="badge bg-secondary">Belum ada</span>
-                                        <?php } ?>
+                                        <a href="uploads/<?php echo $data['bukti_transfer']; ?>" target="_blank" class="btn btn-sm btn-info text-white">Lihat Bukti</a>
                                     </td>
                                 </tr>
                                 <?php 
@@ -108,7 +115,7 @@ $role = $_SESSION['role'];
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered table-striped align-middle">
                             <thead>
                                 <tr>
                                     <th>Periode Bulan</th>
@@ -120,7 +127,7 @@ $role = $_SESSION['role'];
                             <tbody>
                                 <?php
                                 // Query difilter berdasarkan id_user yang sedang login agar karyawan hanya bisa melihat miliknya sendiri
-                                $query = mysqli_query($koneksi, "SELECT * FROM penggajian WHERE id_user = '$id_user'");
+                                $query = mysqli_query($koneksi, "SELECT * FROM penggajian WHERE id_user = '$id_user' ORDER BY id_penggajian DESC");
                                 if (mysqli_num_rows($query) > 0) {
                                     while ($data = mysqli_fetch_assoc($query)) {
                                 ?>
@@ -129,11 +136,7 @@ $role = $_SESSION['role'];
                                     <td>Rp <?php echo number_format($data['potongan'], 0, ',', '.'); ?></td>
                                     <td>Rp <?php echo number_format($data['total_gaji'], 0, ',', '.'); ?></td>
                                     <td>
-                                        <?php if (!empty($data['bukti_transfer'])) { ?>
-                                            <a href="uploads/<?php echo $data['bukti_transfer']; ?>" target="_blank" class="btn btn-sm btn-success">Unduh / Lihat Bukti</a>
-                                        <?php } else { ?>
-                                            <span class="badge bg-secondary">Belum diunggah Admin</span>
-                                        <?php } ?>
+                                        <a href="uploads/<?php echo $data['bukti_transfer']; ?>" target="_blank" class="btn btn-sm btn-success">Lihat Bukti</a>
                                     </td>
                                 </tr>
                                 <?php 

@@ -11,7 +11,7 @@ include 'koneksi.php';
 // Proses simpan data ketika form disubmit
 if (isset($_POST['proses'])) {
     $id_user        = $_POST['id_user'];
-    $periode_bulan  = $_POST['periode_bulan'];
+    $periode_bulan = date('F Y', strtotime($_POST['periode_bulan']));
     $potongan       = $_POST['potongan'];
 
     // Ambil data gaji pokok dan tunjangan berdasarkan jabatan karyawan yang dipilih
@@ -46,8 +46,10 @@ if (isset($_POST['proses'])) {
     $query_insert = mysqli_query($koneksi, "INSERT INTO penggajian (id_user, periode_bulan, potongan, total_gaji, bukti_transfer) VALUES ('$id_user', '$periode_bulan', '$potongan', '$total_gaji', '$nama_file_baru')");
 
     if ($query_insert) {
-        // Redirect kembali ke dashboard dengan pesan sukses
-        header("location:index.php?pesan=sukses");
+        echo "<script>
+                    alert('Berhasil! Data gaji telah diproses.');
+                    window.location='index.php';
+            </script>";
         exit();
     } else {
         $error = "Gagal memproses gaji: " . mysqli_error($koneksi);
@@ -62,7 +64,6 @@ if (isset($_POST['proses'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Proses Gaji Baru - HRIS Payroll</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -107,17 +108,17 @@ if (isset($_POST['proses'])) {
 
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Periode Bulan</label>
-                                <input type="text" name="periode_bulan" class="form-control" placeholder="Contoh: November 2026" required>
+                                <input type="month" name="periode_bulan" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Potongan (Absen / Lainnya)</label>
-                                <input type="number" name="potongan" class="form-control" placeholder="Masukkan nominal angka (contoh: 100000)" value="0" required>
+                                <input type="number" name="potongan" class="form-control" min="0" placeholder="Masukkan nominal angka (contoh: 100000)" value="0" required>
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Unggah Dokumen Bukti Transfer (Opsional)</label>
-                                <input type="file" name="bukti_transfer" class="form-control">
+                                <label class="form-label fw-bold">Unggah Dokumen Bukti Transfer</label>
+                                <input type="file" name="bukti_transfer" class="form-control" accept="image/*,.pdf" required>
                                 <div class="form-text">Format yang didukung: Gambar atau PDF.</div>
                             </div>
 

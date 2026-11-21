@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Nov 2026 pada 15.05
+-- Waktu pembuatan: 21 Nov 2026 pada 16.14
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -39,7 +39,12 @@ CREATE TABLE `jabatan` (
 --
 
 INSERT INTO `jabatan` (`id_jabatan`, `nama_jabatan`, `gaji_pokok`, `tunjangan`) VALUES
-(1, 'Admin HRD', 5000000, 1000000);
+(2, 'HR Manager', 8500000, 2000000),
+(3, 'Staff HRD', 5500000, 1000000),
+(4, 'Software Engineer', 7500000, 1500000),
+(5, 'Finance & Accounting', 6000000, 1200000),
+(6, 'Marketing Executive', 5000000, 1000000),
+(7, 'Staff Operasional', 4500000, 750000);
 
 -- --------------------------------------------------------
 
@@ -55,6 +60,14 @@ CREATE TABLE `penggajian` (
   `total_gaji` int(11) NOT NULL,
   `bukti_transfer` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `penggajian`
+--
+
+INSERT INTO `penggajian` (`id_penggajian`, `id_user`, `periode_bulan`, `potongan`, `total_gaji`, `bukti_transfer`) VALUES
+(1, 6, 'November 2026', 0, 9000000, 'bukti_1795272648.png'),
+(2, 7, 'January 2026', 1000000, 5000000, 'bukti_1795272680.png');
 
 -- --------------------------------------------------------
 
@@ -76,7 +89,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `nama_lengkap`, `username`, `password`, `role`, `id_jabatan`) VALUES
-(1, 'Yhasfi Dwi Syaifullah', 'admin', '12345', 'admin', 1);
+(3, 'Yhasfi Dwi Syaifullah', 'Keb0range', '$2y$10$f5m8cZlyqXhGF/cMMtGVuuEUC92Exu.D4P7qXAtgjMLKXbBfDruRO', 'admin', 2),
+(5, 'Hamdallah', 'Hamdallah', '$2y$10$f5m8cZlyqXhGF/cMMtGVuuEUC92Exu.D4P7qXAtgjMLKXbBfDruRO', 'karyawan', 5),
+(6, 'Ronaldo', 'jr', '$2y$10$pbtFlWonDfbc9GS9Eq/qVOt0CyPufz.hJ6ur//GpwexnQyn9Xm.GS', 'karyawan', 4),
+(7, 'Karyawan', 'karyawan', '$2y$10$GT0wfRW4MX6W2ZhJjcbi8e1Mc/GEL2DldSAJrU8a4GsT1lp8z7Btm', 'karyawan', 6);
 
 --
 -- Indexes for dumped tables
@@ -100,6 +116,10 @@ ALTER TABLE `penggajian`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id_user`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `username_2` (`username`),
+  ADD UNIQUE KEY `username_3` (`username`),
+  ADD UNIQUE KEY `username_4` (`username`),
   ADD KEY `id_jabatan` (`id_jabatan`);
 
 --
@@ -110,19 +130,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `jabatan`
 --
 ALTER TABLE `jabatan`
-  MODIFY `id_jabatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_jabatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `penggajian`
 --
 ALTER TABLE `penggajian`
-  MODIFY `id_penggajian` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_penggajian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
